@@ -1,0 +1,10 @@
+# Default initial positions for r1d1's ros2_control fake system
+
+initial_positions:
+  forearm_joint: 0
+  shoulder_joint: 0
+  slider: 0
+  upperarm_joint: 0
+  wrist_joint_1: 0
+  wrist_joint_2: 0
+  wrist_joint_3: 0
