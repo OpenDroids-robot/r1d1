@@ -17,6 +17,8 @@
         <joint name="wrist_joint_1"/>
         <joint name="wrist_joint_2"/>
         <joint name="wrist_joint_3"/>
+    </group>
+    <group name="slider">
         <joint name="slider"/>
         <joint name="virtual_joint"/>
     </group>
@@ -29,6 +31,9 @@
         <joint name="wrist_joint_1" value="1.5689"/>
         <joint name="wrist_joint_2" value="0.6089"/>
         <joint name="wrist_joint_3" value="-0.3298"/>
+    </group_state>
+    <group_state name="slidder_middle" group="slider">
+        <joint name="slider" value="0.0425"/>
     </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>

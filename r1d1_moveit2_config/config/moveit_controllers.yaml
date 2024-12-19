@@ -5,6 +5,7 @@ moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControll
 moveit_simple_controller_manager:
   controller_names:
     - arm_controller
+    - slider_controller
 
   arm_controller:
     type: FollowJointTrajectory
@@ -20,3 +21,9 @@ moveit_simple_controller_manager:
       - wrist_joint_3
     action_ns: follow_joint_trajectory
     default: true
+  slider_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - slider

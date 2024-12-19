@@ -93,6 +93,13 @@ def generate_launch_description():
             "arm_controller", "-c", "/controller_manager"
         ]
     )
+    slider_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "slider_controller", "-c", "/controller_manager"
+        ]
+    )
 
     return LaunchDescription([
         
@@ -104,5 +111,6 @@ def generate_launch_description():
         joint_state_publisher_node,
         # diff_controller_spawner,
         joint_state_broadcaster_spawner,
-        arm_controller_spawner
+        arm_controller_spawner,
+        slider_controller_spawner,
     ])
