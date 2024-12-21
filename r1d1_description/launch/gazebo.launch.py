@@ -10,6 +10,7 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
+from launch.actions import AppendEnvironmentVariable
 
 def generate_launch_description():
 
@@ -19,6 +20,7 @@ def generate_launch_description():
     robot_description_config = xacro.process_file(xacro_file)
     robot_urdf = robot_description_config.toxml()
     gazebo_params_file = os.path.join(share_dir,'config','gazebo_params.yaml')
+    world = os.path.join(share_dir,'world','empty_world.world')
     
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
@@ -41,34 +43,33 @@ def generate_launch_description():
     gazebo_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
-                FindPackageShare('gazebo_ros'),
+                FindPackageShare('ros_gz_sim'),
                 'launch',
-                'gzserver.launch.py'
+                'gz_sim.launch.py'
             ])
         ]),
         launch_arguments={
-            # 'pause': 'true',
-            'use_sim_time': 'true'
+            'gz_args': ['-r -s ', world],
+            'on_exit_shutdown': 'true'
         }.items()
     )
     gazebo_client = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
-                FindPackageShare('gazebo_ros'),
+                FindPackageShare('ros_gz_sim'),
                 'launch',
-                'gzclient.launch.py'
+                'gz_sim.launch.py'
             ])
-        ])
+        ]),
+        launch_arguments={'gz_args': '-g '}.items()
     )
-    execute_process = ExecuteProcess(
-        cmd=['ros2', 'param', 'set', '/gazebo', 'use_sim_time', use_sim_time],
-        output='screen'
-    )
+
     urdf_spawn_node = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
+        package='ros_gz_sim',
+        executable='create',
         arguments=[
-            '-entity', 'r1d1',
+            '-name', 'r1d1',
+            '-file', robot_urdf,
             '-topic', 'robot_description'
         ],
         parameters=[
@@ -105,12 +106,10 @@ def generate_launch_description():
         
         gazebo_server,
         gazebo_client,
-        # execute_process,
         urdf_spawn_node,
         robot_state_publisher_node,
         joint_state_publisher_node,
-        # diff_controller_spawner,
-        joint_state_broadcaster_spawner,
-        arm_controller_spawner,
-        slider_controller_spawner,
+        # joint_state_broadcaster_spawner,
+        # arm_controller_spawner,
+        # slider_controller_spawner,
     ])

@@ -328,6 +328,48 @@
   </collision>
 </link>
 
+<!-- <link name="gripper">
+  <inertial>
+    <origin xyz="0.009315778938731978 0.012144110908424044 0.012273494623045167" rpy="0 0 0"/>
+    <mass value="1.5664115302052826"/>
+    <inertia ixx="0.00093" iyy="0.00099" izz="0.000997" ixy="0.000119" iyz="0.000155" ixz="0.000119"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.494322 -0.443048 -1.112671" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find r1d1_description)/meshes/gripper_v6.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.494322 -0.443048 -1.112671" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find r1d1_description)/meshes/gripper_v6.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link> -->
+
+<link name="gripper">
+  <inertial>
+    <origin xyz="0.009315778938731978 0.012144110908424044 0.012273494623045167" rpy="0 0 0"/>
+    <mass value="1.5664115302052826"/>
+    <inertia ixx="0.00093" iyy="0.00099" izz="0.000997" ixy="0.000119" iyz="0.000155" ixz="0.000119"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.494322 -0.443048 -1.112671" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find r1d1_description)/meshes/gripper_v6.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.494322 -0.443048 -1.112671" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find r1d1_description)/meshes/gripper_v6.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
 <joint name="slider" type="prismatic">
   <origin xyz="0.005999 0.0445 1.067874" rpy="0 0 0"/>
   <parent link="base_link"/>
@@ -428,6 +470,20 @@
   <origin xyz="-0.010393 0.059343 0.040551" rpy="0 0 0"/>
   <parent link="wrist2_Link_1"/>
   <child link="wrist3_Link_1"/>
+  <axis xyz="0.477624 0.616294 0.626144"/>
+</joint>
+
+<!-- <joint name="gripper" type="fixed">
+  <origin xyz="-0.010393 0.059343 0.040551" rpy="0 0 0"/>
+  <parent link="wrist3_Link_1"/>
+  <child link="gripper"/>
+  <axis xyz="0 0 1"/>
+</joint> -->
+
+<joint name="gripper_joint" type="fixed">
+  <origin xyz="-0.010393 0.059343 0.040551" rpy="0 0 0"/>
+  <parent link="wrist3_Link_1"/>
+  <child link="gripper"/>
   <axis xyz="0.477624 0.616294 0.626144"/>
 </joint>
 
