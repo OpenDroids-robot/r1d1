@@ -5,14 +5,14 @@ from cv_bridge import CvBridge, CvBridgeError
 import rclpy.time
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import TransformStamped
-from tf2_msgs.msg import TFMessage
 import tf_transformations
+from tf2_ros import TransformBroadcaster
 
 class ArucoDetector(Node):
     def __init__(self):
         super().__init__('aruco_detector')
         self.bridge = CvBridge()
-
+        self.broacaster = TransformBroadcaster(self)
         # self.info_subscriber = self.create_subscription(
         #     CameraInfo,
         #     '/depth_camera/camera_info', 
@@ -33,11 +33,11 @@ class ArucoDetector(Node):
             10
         )
 
-        self.tf_publisher = self.create_publisher(
-            TFMessage,
-            "/tf",
-            10
-        )
+        # self.tf_publisher = self.create_publisher(
+        #     TFMessage,
+        #     "/tf",
+        #     10
+        # )
 
         self.video_publisher = self.create_publisher(
             Image,
@@ -77,28 +77,45 @@ class ArucoDetector(Node):
                         if distance < 0.0001 or distance > 1000:
                             self.video_publisher.publish(msg)
                         else:
+                        # self.get_logger().info(f"Detected marker: {id}\nRotation : {rvec}\nTranslation : {tvec}")
+
+                            transform_built = np.array([[0,0,1,0],[-1,0,0,0],[0,-1,0,0],[0,0,0,1]]) # to fix frame transform between opencv_camera_frame and camera_link 
+
                             cv2.drawFrameAxes(rgb_image,self.camera_matrix,self.dist_coeffs,rvec,tvec,1,3)
                             cv2.aruco.drawDetectedMarkers(rgb_image,corners,ids)
+                            
                             # To publish transform
-                            rotation_matrix = np.array([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 1]],dtype=float)
-                            rotation_matrix[:3, :3], _ = cv2.Rodrigues(rvec)
-                            tf_message = TFMessage()
+                            transform_matrix = np.array([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 1]],dtype=float)
+                            rotation_matrix, _ = cv2.Rodrigues(rvec)
+
                             # convert the matrix to a quaternion
-                            quaternion = tf_transformations.quaternion_from_matrix(rotation_matrix)
+                            transform_matrix[:3,:3] = rotation_matrix
+                            link_transformation_mat = np.dot(transform_matrix,transform_built)
+                            link_quaternion = tf_transformations.quaternion_from_matrix(link_transformation_mat)
+                            link_tvec = np.dot(transform_built[:3,:3],tvec)
+
+                            # inv_quaternion = np.array([-1*link_quaternion[0],-1*link_quaternion[1],-1*link_quaternion[2],link_quaternion[3]])
+                            # inv_rotation_matrix = tf_transformations.quaternion_matrix(inv_quaternion)
+                            # inv_tvec = -np.dot(inv_rotation_matrix[:3,:3],link_tvec)
+
                             transform = TransformStamped()
                             transform.header.stamp = self.get_clock().now().to_msg()
-                            transform.child_frame_id = "<put_camera_frame_id>"
-                            transform.header.frame_id = f"marker_{id[0]}_frame"
-                            transform.transform.translation.x = float(tvec[0])
-                            transform.transform.translation.y = float(tvec[1])
-                            transform.transform.translation.z = float(tvec[2])
-                            transform.transform.rotation.x = float(quaternion[0])
-                            transform.transform.rotation.y = float(quaternion[1])
-                            transform.transform.rotation.z = float(quaternion[2])
-                            transform.transform.rotation.w = float(quaternion[3])
-                            tf_message.transforms.append(transform)
+                            transform.header.frame_id = "<put_camera_frame_id>"
+                            transform.child_frame_id = f"marker_{id[0]}_frame"
+                            
+                            transform.transform.translation.x = float(link_tvec[0])
+                            transform.transform.translation.y = float(link_tvec[1])
+                            transform.transform.translation.z = float(link_tvec[2])
+                            transform.transform.rotation.x = float(link_quaternion[0])
+                            transform.transform.rotation.y = float(link_quaternion[1])
+                            transform.transform.rotation.z = float(link_quaternion[2])
+                            transform.transform.rotation.w = float(link_quaternion[3])
+
+                            # tf_message.transforms.append(transform)
+                            # self.tf_publisher.publish(tf_message)
+
                             self.transform_publisher.publish(transform)
-                            self.tf_publisher.publish(tf_message)
+                            self.broacaster.sendTransform(transform)
                     else:
                         self.get_logger().error(f"Unable to estimate pose of markers")  
 
