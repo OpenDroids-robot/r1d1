@@ -9,3 +9,4 @@ RUN apt install ros-humble-rqt -y
 RUN apt install ros-humble-rqt-moveit -y
 RUN apt install tmux -y
 RUN apt install vim -y
+RUN apt install python3-pip
