@@ -13,8 +13,12 @@
   <test_depend>python3-pytest</test_depend>
 
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_msgs</exec_depend>
+  <exec_depend>tf_transformations</exec_depend>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>numpy</exec_depend>
 
 
   <export>
