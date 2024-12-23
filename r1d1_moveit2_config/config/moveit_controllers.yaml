@@ -12,13 +12,13 @@ moveit_simple_controller_manager:
     action_ns: follow_joint_trajectory
     default: true
     joints:
-      - slider
       - shoulder_joint
       - upperarm_joint
       - forearm_joint
       - wrist_joint_1
       - wrist_joint_2
       - wrist_joint_3
+      - arm_fixed_joint
     action_ns: follow_joint_trajectory
     default: true
   slider_controller:
@@ -27,3 +27,6 @@ moveit_simple_controller_manager:
     default: true
     joints:
       - slider
+      - virtual_joint
+    action_ns: follow_joint_trajectory
+    default: true

@@ -110,7 +110,7 @@ def generate_launch_description():
         robot_state_publisher_node,
         joint_state_publisher_node,
         # diff_controller_spawner,
-        joint_state_broadcaster_spawner,
+        # joint_state_broadcaster_spawner,
         arm_controller_spawner,
         slider_controller_spawner,
     ])

@@ -17,13 +17,13 @@ controller_manager:
 arm_controller:
   ros__parameters:
     joints:
-      - slider
       - shoulder_joint
       - upperarm_joint
       - forearm_joint
       - wrist_joint_1
       - wrist_joint_2
       - wrist_joint_3
+      - arm_fixed_joint
     command_interfaces:
       - position
     state_interfaces:
@@ -31,7 +31,9 @@ arm_controller:
       - velocity
 slider_controller:
   ros__parameters:
-    joint: slider
+    joints:
+      - slider
+      - virtual_joint
     command_interfaces:
       - position
     state_interfaces:
