@@ -492,12 +492,10 @@
   <limit upper="-0.0005" lower="-0.04" effort="100" velocity="100"/>
 </joint>
 
-<joint name="Rigid 31" type="revolute">
+<joint name="Rigid 31" type="fixed">
   <origin xyz="0.300276 -0.123405 -0.990761" rpy="0 0 0"/>
   <parent link="vertical_v1_1"/>
   <child link="screen_v1_1"/>
-  <axis xyz="0 0 1"/>
-  <limit lower="0" upper="0" effort="0" velocity="0"/>
 </joint>
 
 <joint name="Slider 33" type="prismatic">
