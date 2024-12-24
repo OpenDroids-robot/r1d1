@@ -14,98 +14,167 @@
   <gravity>true</gravity>
 </gazebo>
 
-<gazebo reference="linear_1">
+<gazebo reference="left_wheel_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="left_wheel_1">
-  <material>${body_color}</material>
-  <mu1>100</mu1>
-  <mu2>100</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
 <gazebo reference="right_wheel_1">
   <material>${body_color}</material>
-  <mu1>100</mu1>
-  <mu2>100</mu2>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="c2_1">
-  <material>${body_color}</material>
-  <mu1>0.1</mu1>
-  <mu2>0.1</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="c3_1">
-  <material>${body_color}</material>
-  <mu1>0.1</mu1>
-  <mu2>0.1</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="c1_1">
-  <material>${body_color}</material>
-  <mu1>0.1</mu1>
-  <mu2>0.1</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="c4_1">
-  <material>${body_color}</material>
-  <mu1>0.1</mu1>
-  <mu2>0.1</mu2>
-  <self_collide>true</self_collide>
-</gazebo>
-
-<gazebo reference="arm_base_link_1">
+<gazebo reference="caster_1_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="shoulder_Link_1">
+<gazebo reference="mount_v1_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="upperarm_Link_1">
+<gazebo reference="vertical_v1_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="forearm_Link_1">
+<gazebo reference="gripper_finger_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="wrist1_Link_1">
+<gazebo reference="gripper_finger2_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="wrist2_Link_1">
+<gazebo reference="screen_v1_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="wrist3_Link_1">
+<gazebo reference="slider_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="arm_c1_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="amr_c2_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="arm_c4_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="arm_c5_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="arm_c6_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="amr_c3_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="arm_c7_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="gripper_base_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="camera_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+  <sensor type="camera" name="camera_1">
+    <update_rate>60</update_rate>
+    <visualize>true</visualize>
+    <camera name="head">
+      <horizontal_fov>1.3962634</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.02</near>
+        <far>300</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <!-- Noise is sampled independently per pixel on each frame.
+              That pixel's noise value is added to each of its color
+              channels, which at that point lie in the range [0,1]. -->
+        <mean>0.0</mean>
+        <stddev>0.007</stddev>
+      </noise>
+    </camera>
+    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+      <ros>
+        <namespace>r1d1</namespace>
+        <!-- TODO(louise) Remapping not working due to https://github.com/ros-perception/image_common/issues/93 -->
+        <argument>image_raw:=image_demo</argument>
+        <argument>camera_info:=camera_info_demo</argument>
+      </ros>
+      <!-- camera_name>omit so it defaults to sensor name</camera_name-->
+      <!-- frame_name>omit so it defaults to link name</frameName-->
+    </plugin>
+  </sensor>
+</gazebo>
+
+<gazebo reference="lidar_1">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
   <mu2>0.2</mu2>

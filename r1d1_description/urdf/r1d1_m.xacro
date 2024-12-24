@@ -10,7 +10,7 @@
         <xacro:include filename="$(find r1d1_description)/urdf/ros2_control.xacro" />
     </xacro:if>
     <!-- <xacro:include filename="$(find r1d1_description)/urdf/gazebo_control.xacro" />     -->
-    <xacro:include filename="$(find r1d1_description)/urdf/lidar.xacro" />
+    <!-- <xacro:include filename="$(find r1d1_description)/urdf/lidar.xacro" /> -->
     <!-- <xacro:include filename="camera.xacro" /> -->
     <!-- <xacro:include filename="depth_camera.xacro" /> -->
 
