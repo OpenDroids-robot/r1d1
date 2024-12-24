@@ -497,7 +497,7 @@
   <parent link="vertical_v1_1"/>
   <child link="screen_v1_1"/>
   <axis xyz="0 0 1"/>
-  <limit lower="0" upper="0" effor="0" velocity="0"/>
+  <limit lower="0" upper="0" effort="0" velocity="0"/>
 </joint>
 
 <joint name="Slider 33" type="prismatic">
@@ -567,7 +567,7 @@
   <parent link="screen_v1_1"/>
   <child link="camera_1"/>
   <axis xyz="0 0 1"/>
-  <limit lower="0" upper="0" effor="0" velocity="0"/>
+  <limit lower="0" upper="0" effort="0" velocity="0"/>
 </joint>
 
 <joint name="Rigid 46" type="fixed">
