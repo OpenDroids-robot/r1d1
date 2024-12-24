@@ -1,45 +1,41 @@
-import os
-import xacro
-from ament_index_python.packages import get_package_share_directory
-
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
-from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
-from launch.actions import AppendEnvironmentVariable
+import os
+import xacro
+from ament_index_python.packages import get_package_share_directory
+
 
 def generate_launch_description():
-
     share_dir = get_package_share_directory('r1d1_description')
-    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    xacro_file = os.path.join(share_dir, 'urdf', 'r1d1_m.xacro')
+
+    xacro_file = os.path.join(share_dir, 'urdf', 'r1d1.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     robot_urdf = robot_description_config.toxml()
-    gazebo_params_file = os.path.join(share_dir,'config','gazebo_params.yaml')
-    world = os.path.join(share_dir,'world','empty_world.world')
-    
+    urdf_path = os.path.join(share_dir, 'urdf', 'r1d1.urdf')
+    world = os.path.join(share_dir,'world','empty_world.sdf')
+    with open(urdf_path, 'w') as urdf_file:
+        urdf_file.write(robot_urdf)
+    print("URDF file generated successfully")
+
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
-        output = 'screen',
         parameters=[
-            {
-                'robot_description': robot_urdf,
-                'use_sim_time': use_sim_time,
-            }
-        ],
-        arguments=[robot_urdf]
+            {'robot_description': robot_urdf}
+        ]
     )
+
     joint_state_publisher_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',
         name='joint_state_publisher'
     )
+
     gazebo_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -50,9 +46,10 @@ def generate_launch_description():
         ]),
         launch_arguments={
             'gz_args': ['-r -s ', world],
-            'on_exit_shutdown': 'true'
+            'pause': 'true'
         }.items()
     )
+
     gazebo_client = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -69,7 +66,7 @@ def generate_launch_description():
         executable='create',
         arguments=[
             '-name', 'r1d1',
-            '-file', robot_urdf,
+            '-file', urdf_path,
             '-topic', 'robot_description'
         ],
         parameters=[
@@ -77,39 +74,26 @@ def generate_launch_description():
         ],
         output='screen'
     )
-    joint_state_broadcaster_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
+    
+    ros_gz_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
         arguments=[
-            "joint_state_broadcaster", "-c", "/controller_manager"
+            #'/lidar_data@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+            #'/lidar_data/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            '/rgbd_camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
+            '/rgbd_camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo',
+            '/rgbd_camera/depth_image@sensor_msgs/msg/Image@gz.msgs.Image',
+            '/rgbd_camera/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked'
         ],
-        parameters=[
-            {'use_sim_time': True}
-        ],
-    )
-    arm_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=[
-            "arm_controller", "-c", "/controller_manager"
-        ]
-    )
-    slider_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=[
-            "slider_controller", "-c", "/controller_manager"
-        ]
+        output='screen'
     )
 
     return LaunchDescription([
-        
+        robot_state_publisher_node,
+        joint_state_publisher_node,
         gazebo_server,
         gazebo_client,
         urdf_spawn_node,
-        robot_state_publisher_node,
-        joint_state_publisher_node,
-        # joint_state_broadcaster_spawner,
-        # arm_controller_spawner,
-        # slider_controller_spawner,
+        ros_gz_bridge
     ])

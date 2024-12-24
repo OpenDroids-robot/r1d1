@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+  <joint name="Rigid 45" type="fixed">
+    <origin xyz="0.0 -0.117 0.0525" rpy="0 0 0"/>
+    <parent link="screen_v1_1"/>
+    <child link="camera_1"/>
+  </joint>
+
+  <link name="camera_1">
+    <inertial>
+        <origin xyz="6.1791840987637954e-15 -0.01000010951681022 -7.127631818093505e-14" rpy="0 0 0"/>
+        <mass value="0.05166258768470149"/>
+        <inertia ixx="3e-06" iyy="1.9e-05" izz="1.9e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+    </inertial>
+    <visual>
+        <origin xyz="-0.0 0.031999 -1.8375" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="file://$(find r1d1_description)/meshes/camera_1.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="silver"/>
+    </visual>
+    <collision>
+        <origin xyz="-0.0 0.031999 -1.8375" rpy="0 0 0"/>
+        <geometry>
+        <mesh filename="file://$(find r1d1_description)/meshes/camera_1.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision> 
+  </link>
+
+  <gazebo reference="camera_1">
+    <material>Gazebo/Red</material>
+    <sensor name="rgbd_camera" type="rgbd_camera">
+        <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+            <width>600</width>
+            <height>400</height>
+        </image>
+        <clip>
+            <near>0.1</near>
+            <far>100</far>
+        </clip>
+        </camera>
+        <always_on>1</always_on>
+        <!--If running at good RTF then lower the update rate to 30 or so-->
+        <update_rate>1000</update_rate>
+        <visualize>true</visualize>
+        <topic>rgbd_camera</topic>
+        <plugin filename="ignition-gazebo-sensors-system" name="gz::sim::systems::Sensors">
+          <render_engine>ogre2</render_engine>
+        </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>
