@@ -8,6 +8,9 @@ controller_manager:
 
     slider_controller:
       type: joint_trajectory_controller/JointTrajectoryController
+    
+    gripper_controller:
+      type: position_controllers/JointGroupPositionController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -36,3 +39,9 @@ slider_controller:
     state_interfaces:
       - position
       - velocity
+
+gripper_controller:
+  ros__parameters:
+    joints:
+      - Slider 29
+      - Slider 30

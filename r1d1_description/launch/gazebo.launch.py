@@ -7,11 +7,11 @@ from launch.substitutions import PathJoinSubstitution
 import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
-
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     share_dir = get_package_share_directory('r1d1_description')
-
+    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
     xacro_file = os.path.join(share_dir, 'urdf', 'r1d1_m.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     robot_urdf = robot_description_config.toxml()
@@ -21,7 +21,8 @@ def generate_launch_description():
         executable='robot_state_publisher',
         name='robot_state_publisher',
         parameters=[
-            {'robot_description': robot_urdf}
+            {'robot_description': robot_urdf,
+             'use_sim_time': use_sim_time,}
         ]
     )
 
@@ -40,7 +41,8 @@ def generate_launch_description():
             ])
         ]),
         launch_arguments={
-            'pause': 'true'
+            'pause': 'false',
+            'use_sim_time': 'true'
         }.items()
     )
 
@@ -61,7 +63,42 @@ def generate_launch_description():
             '-entity', 'r1d1',
             '-topic', 'robot_description'
         ],
+        parameters=[
+            {'use_sim_time': True}
+        ],
         output='screen'
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "joint_state_broadcaster", "-c", "/controller_manager"
+        ],
+        parameters=[
+            {'use_sim_time': True}
+        ],
+    )
+    slider_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "slider_controller", "-c", "/controller_manager"
+        ]
+    )
+    arm_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "arm_controller", "-c", "/controller_manager"
+        ]
+    )
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "gripper_controller", "-c", "/controller_manager"
+        ]
     )
 
     return LaunchDescription([
@@ -70,4 +107,8 @@ def generate_launch_description():
         gazebo_server,
         gazebo_client,
         urdf_spawn_node,
+        joint_state_broadcaster_spawner,
+        slider_controller_spawner,
+        gripper_controller_spawner,
+        arm_controller_spawner,
     ])
