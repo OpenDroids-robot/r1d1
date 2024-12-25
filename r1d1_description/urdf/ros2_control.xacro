@@ -99,6 +99,21 @@
             <state_interface name="effort"/>
         </joint>
 
+        <joint name="Slider 29">
+            <command_interface name="position"/>
+            <state_interface name="position">
+                <param name="initial_value">0.0081</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="Slider 30">
+            <command_interface name="position"/>
+            <state_interface name="position">
+                <param name="initial_value">-0.0040</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+        </joint>
+
         <joint name="left_wheel_joint">
                 <command_interface name="velocity">
                     <param name="min">-10</param>

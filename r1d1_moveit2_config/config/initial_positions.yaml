@@ -1,10 +1,12 @@
 # Default initial positions for r1d1's ros2_control fake system
 
 initial_positions:
-  forearm_joint: -2.182
-  shoulder_joint: 1.48
-  slider: 0
-  upperarm_joint: -0.5
-  wrist_joint_1: 5.6
-  wrist_joint_2: -0.55
-  wrist_joint_3: -1.8
+  Revolute 35: 0
+  Revolute 38: 0
+  Revolute 39: 0
+  Revolute 40: 0
+  Revolute 41: 0
+  Revolute 42: 0
+  Slider 29: 0.0081
+  Slider 30: -0.0040
+  Slider 33: 0

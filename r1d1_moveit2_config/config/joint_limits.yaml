@@ -8,38 +8,48 @@ default_acceleration_scaling_factor: 0.1
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  forearm_joint:
-    has_velocity_limits: true
-    max_velocity: 3.1499999999999999
-    has_acceleration_limits: false
-    max_acceleration: 0.1
-  shoulder_joint:
-    has_velocity_limits: true
-    max_velocity: 3.1499999999999999
-    has_acceleration_limits: false
-    max_acceleration: 0.1
-  slider:
-    has_velocity_limits: true
-    max_velocity: 3.1499999999999999
-    has_acceleration_limits: false
-    max_acceleration: 0.1
-  upperarm_joint:
-    has_velocity_limits: true
-    max_velocity: 3.2000000000000002
-    has_acceleration_limits: false
-    max_acceleration: 0.1
-  wrist_joint_1:
-    has_velocity_limits: true
-    max_velocity: 3.2000000000000002
-    has_acceleration_limits: false
-    max_acceleration: 0.1
-  wrist_joint_2:
-    has_velocity_limits: true
-    max_velocity: 3.2000000000000002
-    has_acceleration_limits: false
-    max_acceleration: 0.1
-  wrist_joint_3:
+  Revolute 35:
     has_velocity_limits: false
+    max_velocity: 3.1499999999999999
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Revolute 38:
+    has_velocity_limits: false
+    max_velocity: 3.1499999999999999
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Revolute 39:
+    has_velocity_limits: false
+    max_velocity: 3.1499999999999999
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Revolute 40:
+    has_velocity_limits: false
+    max_velocity: 3.2000000000000002
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Revolute 41:
+    has_velocity_limits: false
+    max_velocity: 3.2000000000000002
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Revolute 42:
+    has_velocity_limits: false
+    max_velocity: 3.2000000000000002
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Slider 29:
+    has_velocity_limits: true
+    max_velocity: 3.2000000000000002
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Slider 30:
+    has_velocity_limits: true
+    max_velocity: 3.2000000000000002
+    has_acceleration_limits: false
+    max_acceleration: 0.1
+  Slider 33:
+    has_velocity_limits: true
     max_velocity: 3.2000000000000002
     has_acceleration_limits: false
     max_acceleration: 0.1
