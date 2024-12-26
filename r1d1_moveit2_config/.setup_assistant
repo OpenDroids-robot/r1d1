@@ -1,10 +1,25 @@
 moveit_setup_assistant_config:
   urdf:
     package: r1d1_description
-    relative_path: urdf/r1d1.xacro
+    relative_path: urdf/r1d1_m.xacro
   srdf:
-    relative_path: config/r1d1.srdf
+    relative_path: config/robot.srdf
   package_settings:
     author_name: Rahul Mishra
     author_email: mishrarahul1997@yahoo.com
-    generated_timestamp: 1735166319
+    generated_timestamp: 1735235659
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

@@ -28,22 +28,25 @@ arm_controller:
       - Revolute 40
       - Revolute 42
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
+      - position
+      - velocity
 slider_controller:
   ros__parameters:
     joint: Slider 33
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
+      - position
+      - velocity
 gripper_controller:
   ros__parameters:
     joints:
       - Slider 29
       - Slider 30
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
+      - position
+      - velocity

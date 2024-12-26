@@ -1,4 +1,4 @@
-# Default initial positions for r1d1's ros2_control fake system
+# Default initial positions for robot's ros2_control fake system
 
 initial_positions:
   Revolute 35: 0
@@ -7,6 +7,6 @@ initial_positions:
   Revolute 40: 0
   Revolute 41: 0
   Revolute 42: 0
-  Slider 29: 0.0081
-  Slider 30: -0.0040
+  Slider 29: 0
+  Slider 30: 0
   Slider 33: 0

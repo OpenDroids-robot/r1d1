@@ -4,7 +4,7 @@
   <name>r1d1_moveit2_config</name>
   <version>0.3.0</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the r1d1 with the MoveIt Motion Planning Framework
+     An automatically generated package with all the configuration and launch files for using the robot with the MoveIt Motion Planning Framework
   </description>
   <maintainer email="mishrarahul1997@yahoo.com">Rahul Mishra</maintainer>
 
@@ -43,6 +43,7 @@
   <exec_depend>rviz_default_plugins</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>warehouse_ros_mongo</exec_depend>
+  <exec_depend>xacro</exec_depend>
 
 
   <export>

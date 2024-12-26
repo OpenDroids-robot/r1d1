@@ -19,16 +19,20 @@ moveit_simple_controller_manager:
       - Revolute 39
       - Revolute 40
       - Revolute 42
+    action_ns: follow_joint_trajectory
+    default: true
   slider_controller:
     type: FollowJointTrajectory
     action_ns: follow_joint_trajectory
     default: true
     joints:
       - Slider 33
+    action_ns: follow_joint_trajectory
+    default: true
   gripper_controller:
-    type: GripperCommand
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
     joints:
       - Slider 29
       - Slider 30
-    action_ns: gripper_cmd
-    default: true
