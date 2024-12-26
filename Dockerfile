@@ -7,6 +7,7 @@ RUN apt install ros-humble-gazebo-ros -y
 RUN apt install ros-humble-gazebo-ros2-control -y
 RUN apt install ros-humble-rqt -y
 RUN apt install ros-humble-rqt-moveit -y
+RUN apt install ros-humble-rqt-common-plugins -y
 RUN apt install tmux -y
 RUN apt install vim -y
-RUN apt install python3-pip
+RUN apt install python3-pip -y
