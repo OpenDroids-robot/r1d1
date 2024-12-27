@@ -8,7 +8,6 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 
-
 def generate_launch_description():
     share_dir = get_package_share_directory('r1d1_description')
 
@@ -87,6 +86,20 @@ def generate_launch_description():
             '/rgbd_camera/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked'
         ],
         output='screen'
+    )
+    arm_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "arm_controller", "-c", "/controller_manager"
+        ]
+    )
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            "gripper_controller", "-c", "/controller_manager"
+        ]
     )
 
     return LaunchDescription([
