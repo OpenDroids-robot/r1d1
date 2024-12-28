@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <joint name="Rigid 45" type="revolute">
+    <origin xyz="0.0 -0.117 0.0525" rpy="0 0 0"/>
+    <parent link="screen_v1_1"/>
+    <child link="camera_1"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="0" effort="0" velocity="0"/>
+  </joint>
+
+  <link name="camera_1">
+    <inertial>
+      <origin xyz="6.1791840987637954e-15 -0.01000010951681022 -7.127631818093505e-14" rpy="0 0 0"/>
+      <mass value="0.05166258768470149"/>
+      <inertia ixx="3e-06" iyy="1.9e-05" izz="1.9e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.0 0.031999 -1.8375" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find r1d1_description)/meshes/camera_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.0 0.031999 -1.8375" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find r1d1_description)/meshes/camera_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="camera_1">
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <!--The pose here is a bit random so need to be adjusted-->
+      <pose>-0.0 -1.0 1.5 0 0 -1.5708</pose>
+      <camera>
+        <horizontal_fov>1.2</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>BAYER_RGGB8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>10</far>
+        </clip>
+      </camera>
+      <always_on>1</always_on>
+      <!--If running at good RTF then lower the update rate to 30 or so-->
+      <update_rate>10000</update_rate>
+      <visualize>true</visualize>
+      <topic>rgbd_camera</topic>
+      <plugin filename="ignition-gazebo-sensors-system" name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

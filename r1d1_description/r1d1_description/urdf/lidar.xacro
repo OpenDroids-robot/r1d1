@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+<!--This file has added code for lidar. Uncomment the include line in r1d1.xacro to include lidar-->
+  <joint name="Rigid 46" type="fixed">
+    <origin xyz="0.0 -0.123483 0.155" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="lidar_1"/>
+  </joint>
+
+  <link name="lidar_1">
+    <inertial>
+      <origin xyz="-3.8657673471382324e-17 -4.13193513695842e-07 0.015000000000000013" rpy="0 0 0"/>
+      <mass value="0.6616194128460102"/>
+      <inertia ixx="0.00048" iyy="0.00048" izz="0.00086" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.0 0.123483 -0.155" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find r1d1_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0.0 0.123483 -0.155" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find r1d1_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="lidar_1">
+    <material>Gazebo/Red</material>
+    <sensor name="gpu_lidar" type="gpu_lidar">
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <min_angle>-1.54</min_angle>
+            <max_angle>1.54</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.15</min>
+          <max>12</max>
+        </range>
+      </lidar>
+      <alwaysOn>true</alwaysOn>
+      <topic>lidar_data</topic>
+      <pose> 0 0 0 0 0 0 </pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <plugin filename="ignition-gazebo-sensors-system" name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+</robot>
