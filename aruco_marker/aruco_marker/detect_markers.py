@@ -35,11 +35,12 @@ class ArucoDetector(Node):
         # Define world-to-camera transformation matrix
         angle = 42.0
         self.world_to_camera_tf = np.array([
-            [math.cos(math.radians(angle)), 0, math.sin(math.radians(angle)), 15],
-            [0, 1, 0.0, 9.6],
-            [-(math.sin(math.radians(angle))), 0, math.cos(math.radians(angle)), 1795],
+            [math.cos(math.radians(angle)), 0, math.sin(math.radians(angle)), 15*10**-3],
+            [0, 1, 0.0, 9.6*10**-3],
+            [-(math.sin(math.radians(angle))), 0, math.cos(math.radians(angle)), 1795*10**-3],
             [0.0, 0.0, 0.0, 1]
         ])
+        self.marker_size = 0.1
 
     def get_camera_to_world_tf(self):
         
@@ -68,10 +69,10 @@ class ArucoDetector(Node):
             corners, ids, _ = detector.detectMarkers(gray)
             if len(corners) != 0 and len(ids) != 0:
                 for corner, id in zip(corners, ids):
-                    objpoints = np.array([[-0.5, 0.5, 0],
-                                          [0.5, 0.5, 0],
-                                          [0.5, -0.5, 0],
-                                          [-0.5, -0.5, 0]])
+                    objpoints = np.array([[-self.marker_size, self.marker_size, 0],
+                                          [self.marker_size, self.marker_size, 0],
+                                          [self.marker_size, -self.marker_size, 0],
+                                          [-self.marker_size, -self.marker_size, 0]])
                     corner = corner[0]
                     rvec = np.zeros((3, 1), dtype=np.float64)
                     tvec = np.zeros((3, 1), dtype=np.float64)
