@@ -1,7 +1,7 @@
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 import os
@@ -16,8 +16,16 @@ def generate_launch_description():
     xacro.process_doc(doc)
     
     urdf_path = os.path.join(share_dir, 'urdf', 'r1d1_m.urdf')
-    world = os.path.join(share_dir,'world','world_with_aruco.sdf')
+    world = os.path.join(share_dir,'world','empty_world.sdf')
+    # with open(urdf_path, 'w') as urdf_file:
+    #     urdf_file.write(doc.toxml())
+    print("URDF file generated successfully")
 
+    print(xacro_file)
+    execute_process = ExecuteProcess(
+        cmd=['ros2', 'run', 'xacro', 'xacro', f"{xacro_file}", "-o", urdf_path],
+        output='screen'
+    )
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -81,7 +89,8 @@ def generate_launch_description():
             '/rgbd_camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
             '/rgbd_camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo',
             '/rgbd_camera/depth_image@sensor_msgs/msg/Image@gz.msgs.Image',
-            '/rgbd_camera/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked'
+            '/rgbd_camera/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            '/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock',
         ],
         output='screen'
     )
@@ -119,15 +128,16 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        execute_process,
         robot_state_publisher_node,
         joint_state_publisher_node,
         gazebo_server,
         gazebo_client,
         urdf_spawn_node,
         ros_gz_bridge,
-        joint_state_broadcaster_spawner,
-        arm_controller_spawner,
-        slider_controller_spawner,
-        gripper_controller_spawner
+        # joint_state_broadcaster_spawner,
+        # slider_controller_spawner,
+        # gripper_controller_spawner,
+        # arm_controller_spawner,
     ])
 
