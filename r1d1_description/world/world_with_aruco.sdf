@@ -1,0 +1,178 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+
+        <visual name="ground_visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 0.4</diffuse>
+          </material>
+        </visual>
+        <collision name="ground_collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+
+      </link>
+    </model>
+
+    <model name="table">
+      <static>true</static>
+      <link name="leg_fl_link">
+        <pose>-0.4 -2.2 0.3 0 0 0</pose>
+        <visual name="fl_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <diffuse>0 0 1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="fl_collision">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+        </collision>
+
+      </link>
+
+      <link name="leg_rl_link">
+        <pose>0.4 -2.2 0.3 0 0 0</pose>
+        <visual name="rl_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <diffuse>0 0 1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="rl_collision">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="leg_fr_link">
+        <pose>-0.4 -1.8 0.3 0 0 0</pose>
+        <visual name="fr_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <diffuse>0 0 1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="fr_collision">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="leg_rr_link">
+        <pose>0.4 -1.8 0.3 0 0 0</pose>
+        <visual name="rr_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <diffuse>0 0 1 1</diffuse>
+          </material>
+        </visual>
+        <collision name="rr_collision">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.6</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="table_top_link">
+        <pose>0 -2 0.625 0 0 0</pose>
+        <visual name="table_top_visual">
+          <geometry>
+            <box>
+              <size>1 0.6 0.05</size>
+            </box>
+          </geometry>
+          <material>
+          </material>
+        </visual>
+        <collision name="table_top_collision">
+          <geometry>
+            <box>
+              <size>1 0.6 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <model name='aruco_box'>
+      <pose>0 -2 0.9 0 -0 1.5708</pose>
+      <link name='link'>
+        <collision name='aruco_box_collision'>
+          <geometry>
+            <mesh>
+              <uri>file:///home/ishan/OpenDroids_ws/src/aruco_cube/aruco_box/model.dae</uri>
+              <scale>0.25 0.25 0.25</scale>
+            </mesh>
+          </geometry>
+        </collision>
+        <material>
+          <diffuse>0 0 0 0.8</diffuse>
+        </material>
+
+        <visual name='aruco_box_mesh'>
+          <geometry>
+            <mesh>
+              <uri>file:///home/ishan/OpenDroids_ws/src/aruco_cube/aruco_box/model.dae</uri>
+              <scale>0.25 0.25 0.25</scale>
+            </mesh>
+          </geometry>
+        </visual>
+
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+  </world>
+</sdf>
