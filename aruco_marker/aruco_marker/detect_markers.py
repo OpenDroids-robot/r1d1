@@ -40,7 +40,7 @@ class ArucoDetector(Node):
             [-(math.sin(math.radians(angle))), 0, math.cos(math.radians(angle)), 1795*10**-3],
             [0.0, 0.0, 0.0, 1]
         ])
-        self.marker_size = 0.1
+        self.marker_size = 0.065
 
     def get_camera_to_world_tf(self):
         
@@ -56,8 +56,8 @@ class ArucoDetector(Node):
     def rgb_callback(self, msg):
         # Camera intrinsic parameters
         self.camera_matrix = np.array([[565.6008952774198, 0, 320],
-                                        [0, 565.60089527741968, 240],
-                                        [0, 0, 1]], dtype=np.float32)
+                               [0, 565.60089527741968, 240],
+                               [0, 0, 1]], dtype=np.float32)
         self.dist_coeffs = np.array([0.0, 0.0, 0.0, 0.0, 0.0])  # No lens distortion
         aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_1000)
         parameters = cv2.aruco.DetectorParameters()
@@ -77,7 +77,8 @@ class ArucoDetector(Node):
                     rvec = np.zeros((3, 1), dtype=np.float64)
                     tvec = np.zeros((3, 1), dtype=np.float64)
                     success = cv2.solvePnP(objpoints, corner, self.camera_matrix, self.dist_coeffs, rvec, tvec,
-                                           useExtrinsicGuess=True, flags=cv2.SOLVEPNP_EPNP)
+                                           useExtrinsicGuess=True, flags=cv2.SOLVEPNP_ITERATIVE)
+                    tvec /= 1000.0  # Convert from mm to meters           
                     if success:
                         distance = np.linalg.norm(tvec)
                         if distance < 0.0001 or distance > 1000:
@@ -96,7 +97,7 @@ class ArucoDetector(Node):
                             quaternion = tf_transformations.quaternion_from_matrix(
                                 np.vstack((np.hstack((rotation_matrix_world, [[0], [0], [0]])), [0, 0, 0, 1]))
                                 )
-                            
+                            print(tvec)
                             # Publish Pose
                             pose = PoseStamped()
                             pose.header.stamp = self.get_clock().now().to_msg()
