@@ -34,12 +34,20 @@ class ArucoDetector(Node):
 
         # Define world-to-camera transformation matrix
         angle = 42.0
-        self.world_to_camera_tf = np.array([
+        world_to_camera_tf = np.array([
             [math.cos(math.radians(angle)), 0, math.sin(math.radians(angle)), 15*10**-3],
             [0, 1, 0.0, 9.6*10**-3],
             [-(math.sin(math.radians(angle))), 0, math.cos(math.radians(angle)), 1795*10**-3],
             [0.0, 0.0, 0.0, 1]
         ])
+        axis_transform = np.array([
+                                    [0, 0, 1, 0],  # X in new system will be Z from the old system
+                                    [1, 0, 0, 0],  # Y in new system will be X from the old system
+                                    [0, 1, 0, 0],  # Z in new system will be Y from the old system
+                                    [0, 0, 0, 1]   # Homogeneous transformation
+                                ])
+        self.world_to_camera_tf = axis_transform.T @ world_to_camera_tf
+        print(self.world_to_camera_tf)
         self.marker_size = 0.065
 
     def get_camera_to_world_tf(self):
@@ -78,26 +86,34 @@ class ArucoDetector(Node):
                     tvec = np.zeros((3, 1), dtype=np.float64)
                     success = cv2.solvePnP(objpoints, corner, self.camera_matrix, self.dist_coeffs, rvec, tvec,
                                            useExtrinsicGuess=True, flags=cv2.SOLVEPNP_ITERATIVE)
-                    tvec /= 1000.0  # Convert from mm to meters           
+                    # tvec /= 1000.0  # Convert from mm to meters           
                     if success:
                         distance = np.linalg.norm(tvec)
                         if distance < 0.0001 or distance > 1000:
                             self.video_publisher.publish(msg)
                         else:
                         # self.get_logger().info(f"Detected marker: {id}\nRotation : {rvec}\nTranslation : {tvec}")
-                            cv2.drawFrameAxes(rgb_image,self.camera_matrix,self.dist_coeffs,rvec,tvec,1,3)
-                            cv2.aruco.drawDetectedMarkers(rgb_image,corners,ids)
+                            # cv2.drawFrameAxes(rgb_image,self.camera_matrix,self.dist_coeffs,rvec,tvec,1,3)
+                            # cv2.aruco.drawDetectedMarkers(rgb_image,corners,ids)
 
-                            camera_to_world_tf = self.get_camera_to_world_tf()
+                            # camera_to_world_tf = self.get_camera_to_world_tf()
                             tvec_h = np.array([tvec[0, 0], tvec[1, 0], tvec[2, 0], 1.0]).reshape(4, 1)
-                            tvec_world = camera_to_world_tf @ tvec_h
+                            # tvec_world = camera_to_world_tf @ tvec_h
 
-                            rotation_matrix, _ = cv2.Rodrigues(rvec)
-                            rotation_matrix_world = camera_to_world_tf[:3, :3] @ rotation_matrix
-                            quaternion = tf_transformations.quaternion_from_matrix(
-                                np.vstack((np.hstack((rotation_matrix_world, [[0], [0], [0]])), [0, 0, 0, 1]))
-                                )
+                            # rotation_matrix, _ = cv2.Rodrigues(rvec)
+                            # rotation_matrix_world = camera_to_world_tf[:3, :3] @ rotation_matrix
+                            # quaternion = tf_transformations.quaternion_from_matrix(
+                            #     np.vstack((np.hstack((rotation_matrix_world, [[0], [0], [0]])), [0, 0, 0, 1]))
+                            #     )
                             print(tvec)
+
+                            camera_to_object = np.array([
+                                                [-0.004, -0.004, 1.0, 0],
+                                                [-1, -0.008, -0.004, -0.015*10**-3],
+                                                [-0.008, -1.0, -0.004, 0],
+                                                [0.0, 0.0, 0.0, 1]
+                                            ])
+                            tvec_world = self.world_to_camera_tf @ camera_to_object @ tvec_h
                             # Publish Pose
                             pose = PoseStamped()
                             pose.header.stamp = self.get_clock().now().to_msg()
@@ -105,10 +121,14 @@ class ArucoDetector(Node):
                             pose.pose.position.x = float(tvec_world[0])
                             pose.pose.position.y = float(tvec_world[1])
                             pose.pose.position.z = float(tvec_world[2])
-                            pose.pose.orientation.x = float(quaternion[0])
-                            pose.pose.orientation.y = float(quaternion[1])
-                            pose.pose.orientation.z = float(quaternion[2])
-                            pose.pose.orientation.w = float(quaternion[3])
+                            # pose.pose.orientation.x = float(quaternion[0])
+                            # pose.pose.orientation.y = float(quaternion[1])
+                            # pose.pose.orientation.z = float(quaternion[2])
+                            # pose.pose.orientation.w = float(quaternion[3])
+                            pose.pose.orientation.x = float(0.0)
+                            pose.pose.orientation.y = float(0.0)
+                            pose.pose.orientation.z = float(0.0)
+                            pose.pose.orientation.w = float(0.0)
                             self.pose_publisher.publish(pose)
                     else:
                         self.get_logger().error(f"Unable to estimate pose of markers")
