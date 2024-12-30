@@ -42,17 +42,10 @@ def generate_launch_description():
     )
 
     gazebo_server = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare('ros_gz_sim'),
-                'launch',
-                'gz_sim.launch.py'
-            ])
-        ]),
-        launch_arguments={
-            'pause': 'false',
-            'gz_args': ['-r -s -v 4', world],
-        }.items()
+        PythonLaunchDescriptionSource(
+        os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
+    ),
+    launch_arguments={'gz_args': ['-r -s -v4 ', world], 'on_exit_shutdown': 'true'}.items()
     )
 
     gazebo_client = IncludeLaunchDescription(
@@ -135,9 +128,9 @@ def generate_launch_description():
         gazebo_client,
         urdf_spawn_node,
         ros_gz_bridge,
-        # joint_state_broadcaster_spawner,
-        # slider_controller_spawner,
-        # gripper_controller_spawner,
-        # arm_controller_spawner,
+        joint_state_broadcaster_spawner,
+        slider_controller_spawner,
+        gripper_controller_spawner,
+        arm_controller_spawner,
     ])
 
