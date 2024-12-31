@@ -6,12 +6,18 @@ import rclpy.time
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PoseStamped
 import tf_transformations
-import math
 
 class ArucoDetector(Node):
     def __init__(self):
         super().__init__('aruco_detector')
         self.bridge = CvBridge()
+
+        # self.info_subscriber = self.create_subscription(
+        #     CameraInfo,
+        #     '/depth_camera/camera_info', 
+        #     self.info_callback,
+        #     10
+        # )
 
         self.rgb_subscriber = self.create_subscription(
             Image,
@@ -32,112 +38,78 @@ class ArucoDetector(Node):
             10
         )
 
-        # Define world-to-camera transformation matrix
-        angle = 42.0
-        world_to_camera_tf = np.array([
-            [math.cos(math.radians(angle)), 0, math.sin(math.radians(angle)), 15*10**-3],
-            [0, 1, 0.0, 9.6*10**-3],
-            [-(math.sin(math.radians(angle))), 0, math.cos(math.radians(angle)), 1795*10**-3],
-            [0.0, 0.0, 0.0, 1]
-        ])
-        axis_transform = np.array([
-                                    [0, 0, 1, 0],  # X in new system will be Z from the old system
-                                    [1, 0, 0, 0],  # Y in new system will be X from the old system
-                                    [0, 1, 0, 0],  # Z in new system will be Y from the old system
-                                    [0, 0, 0, 1]   # Homogeneous transformation
-                                ])
-        self.world_to_camera_tf = axis_transform.T @ world_to_camera_tf
-        print(self.world_to_camera_tf)
-        self.marker_size = 0.065
+    def info_callback(self,msg):
+        self.camera_matrix = msg.k
+        self.dist_coeffs = msg.d
+        self.get_logger().info(f"k : {msg.k}")
+        self.get_logger().info(f"k : {msg.d}")
 
-    def get_camera_to_world_tf(self):
-        
-        R = self.world_to_camera_tf[:3, :3]
-        t = self.world_to_camera_tf[:3, 3]
-        R_inv = R.T
-        t_inv = -R_inv @ t
-        camera_to_world_tf = np.eye(4)
-        camera_to_world_tf[:3, :3] = R_inv
-        camera_to_world_tf[:3, 3] = t_inv
-        return camera_to_world_tf
-
-    def rgb_callback(self, msg):
-        # Camera intrinsic parameters
-        self.camera_matrix = np.array([[565.6008952774198, 0, 320],
-                               [0, 565.60089527741968, 240],
-                               [0, 0, 1]], dtype=np.float32)
-        self.dist_coeffs = np.array([0.0, 0.0, 0.0, 0.0, 0.0])  # No lens distortion
+    def rgb_callback(self,msg):
+        # Camera intrinsic parameters obtained fron camera_info topic in gazebo
+        self.camera_matrix = np.array([[911.0372314453125, 0.0, 637.7843017578125],             #hard-coded camera intrinsic matrix and distortion coefficients for gazebo rgbd camera
+                                [0.0, 911.17919921875, 375.9410400390625],                   #using values from camera_info message. To be modified by calibrating camera 
+                                [0.0,   0.0,   1.0]], dtype=np.float32)               #or using camera info for your use case
+        self.dist_coeffs = np.array([0.00000000000005,0.00000000000005,0.00000000000005,0.00000000000005,0.00000000000005])  # For no lens distortion, assume very small numbers to avoid errors
         aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_1000)
         parameters = cv2.aruco.DetectorParameters()
-
         try:
+            # Convert the ROS depth image message to an OpenCV image
             rgb_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
             gray = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2GRAY)
             detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
-            corners, ids, _ = detector.detectMarkers(gray)
+            corners, ids, rejected = detector.detectMarkers(gray)
             if len(corners) != 0 and len(ids) != 0:
-                for corner, id in zip(corners, ids):
-                    objpoints = np.array([[-self.marker_size, self.marker_size, 0],
-                                          [self.marker_size, self.marker_size, 0],
-                                          [self.marker_size, -self.marker_size, 0],
-                                          [-self.marker_size, -self.marker_size, 0]])
-                    corner = corner[0]
-                    rvec = np.zeros((3, 1), dtype=np.float64)
-                    tvec = np.zeros((3, 1), dtype=np.float64)
-                    success = cv2.solvePnP(objpoints, corner, self.camera_matrix, self.dist_coeffs, rvec, tvec,
-                                           useExtrinsicGuess=True, flags=cv2.SOLVEPNP_ITERATIVE)
-                    # tvec /= 1000.0  # Convert from mm to meters           
-                    if success:
+                for (corner,id) in zip(corners,ids):
+                    rvec, tvec, obj_points = cv2.aruco.estimatePoseSingleMarkers(corner, 0.1, self.camera_matrix, self.dist_coeffs)
+                    print(f"tvec first{tvec}")
+                    # objpoints = np.array(
+                    #     [[-0.1,0.1,0],
+                    #     [0.1,0.1,0],
+                    #     [0.1,-0.1,0],
+                    #     [-0.1,-0.1,0]]
+                    #     )
+                    # objpoints = objpoints / 2
+                    # corner = corner[0]
+                    # rvec = np.zeros((3,1),dtype=np.float64)
+                    # tvec = np.zeros((3,1),dtype=np.float64)
+                    # success = cv2.solvePnP(objpoints,corner,self.camera_matrix,self.dist_coeffs,rvec=rvec,tvec=tvec,useExtrinsicGuess=True,flags=cv2.SOLVEPNP_EPNP)
+                    rvec = rvec[0][0]
+                    tvec = tvec[0][0]
+                    # print(f"second tvec{tvec}")
+                    if ids is not None:
                         distance = np.linalg.norm(tvec)
                         if distance < 0.0001 or distance > 1000:
                             self.video_publisher.publish(msg)
                         else:
                         # self.get_logger().info(f"Detected marker: {id}\nRotation : {rvec}\nTranslation : {tvec}")
-                            # cv2.drawFrameAxes(rgb_image,self.camera_matrix,self.dist_coeffs,rvec,tvec,1,3)
-                            # cv2.aruco.drawDetectedMarkers(rgb_image,corners,ids)
+                            cv2.drawFrameAxes(rgb_image,self.camera_matrix,self.dist_coeffs,rvec,tvec,1,3)
+                            cv2.aruco.drawDetectedMarkers(rgb_image,corners,ids)
+                            # To publish pose
+                            rotation_matrix = np.array([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 1]],dtype=float)
+                            rotation_matrix[:3, :3], _ = cv2.Rodrigues(rvec)
 
-                            # camera_to_world_tf = self.get_camera_to_world_tf()
-                            tvec_h = np.array([tvec[0, 0], tvec[1, 0], tvec[2, 0], 1.0]).reshape(4, 1)
-                            # tvec_world = camera_to_world_tf @ tvec_h
-
-                            # rotation_matrix, _ = cv2.Rodrigues(rvec)
-                            # rotation_matrix_world = camera_to_world_tf[:3, :3] @ rotation_matrix
-                            # quaternion = tf_transformations.quaternion_from_matrix(
-                            #     np.vstack((np.hstack((rotation_matrix_world, [[0], [0], [0]])), [0, 0, 0, 1]))
-                            #     )
-                            print(tvec)
-
-                            camera_to_object = np.array([
-                                                [-0.004, -0.004, 1.0, 0],
-                                                [-1, -0.008, -0.004, -0.015*10**-3],
-                                                [-0.008, -1.0, -0.004, 0],
-                                                [0.0, 0.0, 0.0, 1]
-                                            ])
-                            tvec_world = self.world_to_camera_tf @ camera_to_object @ tvec_h
-                            # Publish Pose
+                            # convert the matrix to a quaternion
+                            quaternion = tf_transformations.quaternion_from_matrix(rotation_matrix)
                             pose = PoseStamped()
                             pose.header.stamp = self.get_clock().now().to_msg()
-                            pose.header.frame_id = f"Detected ID : {id}"
-                            pose.pose.position.x = float(tvec_world[0])
-                            pose.pose.position.y = float(tvec_world[1])
-                            pose.pose.position.z = float(tvec_world[2])
-                            # pose.pose.orientation.x = float(quaternion[0])
-                            # pose.pose.orientation.y = float(quaternion[1])
-                            # pose.pose.orientation.z = float(quaternion[2])
-                            # pose.pose.orientation.w = float(quaternion[3])
-                            pose.pose.orientation.x = float(0.0)
-                            pose.pose.orientation.y = float(0.0)
-                            pose.pose.orientation.z = float(0.0)
-                            pose.pose.orientation.w = float(0.0)
+                            pose.header.frame_id = f"Detected ID : {id} Distance : {distance}"
+                            pose.pose.position.x = float(tvec[0])
+                            pose.pose.position.y = float(tvec[0])
+                            pose.pose.position.z = float(tvec[2])
+                            pose.pose.orientation.x = float(quaternion[0])
+                            pose.pose.orientation.y = float(quaternion[1])
+                            pose.pose.orientation.z = float(quaternion[2])
+                            pose.pose.orientation.w = float(quaternion[3])
                             self.pose_publisher.publish(pose)
                     else:
-                        self.get_logger().error(f"Unable to estimate pose of markers")
-                    ros_msg = self.bridge.cv2_to_imgmsg(rgb_image, encoding="bgr8")
+                        self.get_logger().error(f"Unable to estimate pose of markers")     
+                    ros_msg = self.bridge.cv2_to_imgmsg(rgb_image, encoding="bgr8")  # Convert the OpenCV image to a ROS Image message                       
                     self.video_publisher.publish(ros_msg)
             else:        
                 self.video_publisher.publish(msg)
         except CvBridgeError as e:
             self.get_logger().error(f'Error converting ROS msg to cv2 image: {e}')
+            return  
 
 def main(args=None):
     rclpy.init(args=args)
