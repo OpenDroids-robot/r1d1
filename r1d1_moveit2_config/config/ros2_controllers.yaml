@@ -18,6 +18,19 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+diff_cont:
+  ros__parameters:
+    odom_frame_id: odom
+    base_frame_id: base_link
+    left_wheel_names: ["left_wheel_joint"]
+    right_wheel_names: ["right_wheel_joint"]
+    wheels_per_side: 1
+    wheel_separation: 0.45 # shortest distance between the left and right wheels (inner to inner)
+    wheel_radius: 0.1016
+    open_loop: false
+    enable_odom_tf: true
+    use_stamped_vel: false
+
 arm_controller:
   ros__parameters:
     joints:
